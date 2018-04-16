@@ -1,0 +1,90 @@
+#api configuration including currently supported api params, DB fields and
+#collections
+
+supported_versions:
+    - v0.4
+    - v0.3
+    - v0.2
+    - v0.1
+
+parameters:
+    page:
+    page_size: 25
+    id:
+    ids:
+    fields:
+    person_ids:
+    geo_ids:
+    topic_ids:
+    classification_ids:
+    start_date:
+    end_date:
+    date:
+    collections:
+
+fields:
+    - body
+    - body_html
+    - body_summary
+    - chapt_title
+    - countries
+    - collection
+    - date
+    - date_year
+    - date_month
+    - from_field
+    - id
+    - location
+    - nuclear
+    - persons
+    - topics
+    - classification
+    - refs
+    - cable_references
+    - source
+    - source_path
+    - cable_type
+    - subject
+    - title
+    - to_field
+    - tags
+    - description
+    - category
+    - pdf
+    - title_docview
+    - orighand
+    - concepts
+    - type
+    - office
+    - readability
+
+databases:
+    - declassification_api
+    - declassification_frus
+    - declassification_kissinger
+    - declassification_ddrs
+    - declassification_cables
+    - visualizations
+    - declassification_clinton
+    - declassification_cpdoc
+    - declassification_cabinet
+    - declassification_pdb
+
+collections:
+    frus: declassification_frus
+    kissinger: declassification_kissinger
+    ddrs: declassification_ddrs
+    statedeptcables: declassification_cables
+    clinton: declassification_clinton
+    cpdoc: declassification_cpdoc
+    cabinet: declassification_cabinet
+    pdb: declassification_pdb
+
+entities:
+    - countries
+    - persons
+    - topics
+    - classifications
+
+merriam_text_drop:
+    - 'https://declass.merriamtech.com/merriam/v0.2/declass/textdrop'

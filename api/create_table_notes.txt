@@ -1,0 +1,32 @@
+Table for classifications:
+create table classifications (id int(11), name varchar(250), primary key(id));
+
+Table for classification_doc:
+create table classification_doc as select docs.id as doc_id, docs.date as date, classifications.id as classification_id from classifications inner join docs on classifications.name=docs.classification;
+
+alter table classification_doc add primary key(doc_id, classification_id);
+alter table classification_doc add foreign key(doc_id) references docs(id);
+alter table classification_doc add foreign key(classification_id) references classifications(id);
+
+Table for top_classifications:
+create table top_classifications as select classification_id as id, classifications.name as title, count(*) as doc_count from classifications, classification_doc where classifications.id=classification_doc.classification_id group by classification_id;
+
+alter table top_classifications add primary key(id);
+
+create table classification_topics as select topics.name as topic, topics.id as topic_id, classifications.id as class_id, docs.classification as classification, count(docs.classification) as number from docs, topics, topic_doc, classifications where docs.id=topic_doc.doc_id and topic_doc.topic_id=topics.id and docs.classification=classifications.name group by topics.name, docs.classification;
+
+alter table classification_topics add id int primary key auto_increment;
+
+
+create table classification_countries as select countries.name as country, docs.classification as classification, count(docs.classification) as number from docs, countries, country_doc where docs.id=country_doc.doc_id and country_doc.country_id=countries.id group by countries.name, docs.classification;
+
+alter table classification_countries add id int primary key auto_increment;
+
+CABLES:
+create table classification_countries as select countries.name as country, countries.id as country_id, classifications.id as class_id, docs.classification as classification, count(docs.classification) as number from docs, countries, country_doc, classifications where docs.id=country_doc.doc_id and country_doc.country_id=countries.id and docs.classification=classifications.name group by countries.name, docs.classification;
+
+
+create table classification_persons as select persons.name as person, persons.id as person_id, classifications.id as class_id, docs.classification as classification, count(docs.classification) as number from docs, persons, person_doc, classifications where docs.id=person_doc.doc_id and person_doc.person_id=persons.id and docs.classification=classifications.name group by persons.name, docs.classification;
+
+alter table classification_persons add id int primary key auto_increment;
+
