@@ -4,9 +4,5 @@ python:
   - 3.5
 before_install:
   - sudo apt-get install build-essential python-dev libmysqlclient-dev
-env:
-  global:
-    - DECLASS_API_USER=$DECLASS_API_USER
-    - DECLASS_API_PW=$DECLASS_API_PW
 script:
   - bash ./SETUP_API.sh
