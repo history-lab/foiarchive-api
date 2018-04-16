@@ -3,9 +3,10 @@ sudo: required
 python:
   - 3.5
 install:
-  - export DECLASS_API_USER=$DECLASS_API_USER
-  - export DECLASS_API_PW=$DECLASS_API_PW
   - sudo apt-get install build-essential python-dev libmysqlclient-dev
   - pip install -r requirements.txt
 script:
+  - export DECLASS_API_USER=$DECLASS_API_USER
+  - export DECLASS_API_PW=$DECLASS_API_PW
+  - echo $CI
   - bash ./SETUP_API.sh
