@@ -6,6 +6,7 @@ python:
 install:
   - sudo apt-get install build-essential python-dev libmysqlclient-dev
   - pip install virtualenv
+  - virtualenv env
   - source env/bin/activate
   - pip install -r requirements.txt
 script:
