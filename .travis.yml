@@ -3,10 +3,9 @@ sudo: required
 python:
   - 3.5
 install:
+  - export DECLASS_API_USER=$DECLASS_API_USER
+  - export DECLASS_API_PW=$DECLASS_API_PW
   - sudo apt-get install build-essential python-dev libmysqlclient-dev
-  - pip install virtualenv
-  - virtualenv env
-  - source env/bin/activate
   - pip install -r requirements.txt
 script:
   - bash ./SETUP_API.sh

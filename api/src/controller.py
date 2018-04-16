@@ -70,8 +70,8 @@ class Controller(object):
         '''
 
         credentials = Controller.conn_config[connection_type]
-        username = ENV['DECLASS_API_USER'] or credentials['user']
-        password = ENV['DECLASS_API_PW'] or credentials['password']
+        username = DECLASS_API_USER or credentials['user']
+        password = DECLASS_API_PW or credentials['password']
         host = credentials["host"]
 
         self.Tables = defaultdict(dict)
