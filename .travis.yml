@@ -9,6 +9,5 @@ env:
     - DECLASS_API_USER=$DECLASS_API_USER
     - DECLASS_API_PW=$DECLASS_API_PW
 script:
-  - echo DECLASS_API_USER
-  - echo $TRAVIS_SECURE_ENV_VARS
+  - echo $DECLASS_API_USER
   - bash ./SETUP_API.sh
