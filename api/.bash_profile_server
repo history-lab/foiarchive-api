@@ -1,2 +1,0 @@
-export PYTHONPATH=/home/administrator/declassengine/apismaoui:$PYTHONPATH
-export DECLASS_API_SMAOUI=/home/administrator/declassengine/apismaoui

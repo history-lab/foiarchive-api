@@ -68,3 +68,6 @@ MANIFEST
 
 # virtualenv
 env
+
+# ignore changes to conn_config !!!
+**conn_config.yml

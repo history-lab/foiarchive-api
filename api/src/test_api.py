@@ -1,9 +1,3 @@
-"""
-Main API file containing all end-point routes. Initializes a Controller
-object and a Clerk object to communicate with the Declass Database and
-return JSON formatted responses.
-"""
-
 import os
 import argparse
 from datetime import date
@@ -923,5 +917,3 @@ if __name__ == '__main__':
         mail_handler = clerk.mail_handler_setup()
         app.logger.addHandler(mail_handler)
     '''
-
-    app.run(host='0.0.0.0', port=args.port, debug=args.debug, use_reloader=True)
