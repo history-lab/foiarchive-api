@@ -2,7 +2,6 @@ language: python
 sudo: required
 python:
   - 3.5
-  - 3.6
 install:
   - sudo apt-get install build-essential python-dev libmysqlclient-dev
   - pip install virtualenv
