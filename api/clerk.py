@@ -19,7 +19,7 @@ class Clerk(object):
     def __init__(self, controller):
         self.JSON = Clerk.CustomJSONEncoder()
         self.controller = controller
-        self.LOG_FILE = os.path.join(controller.DECLASS_API, 'src/api.log')
+        self.LOG_FILE = ('api.log')
 
 
     def process(self, data, resp_code, json_encoder=jsonify, page=None, page_size=None, next_page=None, count=None):

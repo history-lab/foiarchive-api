@@ -7,20 +7,13 @@ return JSON formatted responses.
 import os
 import argparse
 from datetime import date
-from flask import Flask, redirect, request, abort
+from flask import Flask, redirect, request, abort, jsonify
 from flask_cors import cross_origin
-from controller import Controller
 
-app = Flask(__name__)
-
+from api import app, clerk, controller
 
 # ---------------------- FLASK ENGINE OPERATIONS ---------------------- #
 
-def shutdown_server():
-    func = request.environ.get('werkzeug.server.shutdown')
-    if func is None:
-        raise RuntimeError('Not running with the Werkzeug Server')
-    func()
 
 @app.route('/shutdown', methods=['POST'])
 def shutdown():
@@ -50,6 +43,7 @@ def declass_fields(version):
     @rtype:   json
     @return:  Array of available metadata across collections.
     """
+
     probe_request(version, request)
 
     return controller.get_config_fields(display=True)
@@ -310,6 +304,7 @@ def random_doc_ids(version):
     @rtype:   json
     @return:  Array of document ids.
     """
+    print(request)
     accepted_params = {'limit'}
     probe_request(version, request, accepted_params)
 
@@ -812,24 +807,24 @@ def probe_request(version, request, accepted_params=None):
     @rtype:   None
     @return:  Returns an error message if the url is unacceptable.
     """
-    if not clerk.is_valid_version(version):
-        complain("Version")
-
-    if request.args.items():
-        if accepted_params is None:
-            complain("NoParameters")
-
-        passed_params = [] if (not request.args.items()) else [i[0].lower() for i in request.args.items()]
-        print(passed_params)
-
-        if not clerk.valid_params(passed_params, accepted_params, request):
-            complain("Parameters", accepted_params)
-
-    if clerk.is_missing_param_key_val(request):
-        complain("Partial")
-
-    if not clerk.is_valid_pagination(request):
-        complain("Pagination")
+    # if not clerk.is_valid_version(version):
+    #     complain("Version")
+    #
+    # if request.args.items():
+    #     # print(request.args.items)
+    #     if accepted_params is None:
+    #         complain("NoParameters")
+    #
+    #     passed_params = [] if (not request.args.items()) else [i[0].lower() for i in request.args.items()]
+    #
+    #     if not clerk.valid_params(passed_params, accepted_params, request):
+    #         complain("Parameters", accepted_params)
+    #
+    # if clerk.is_missing_param_key_val(request):
+    #     complain("Partial")
+    #
+    # if not clerk.is_valid_pagination(request):
+    #     complain("Pagination")
 
 
 def complain(message, parameters=None):
@@ -876,52 +871,3 @@ def complain(message, parameters=None):
         complaint = clerk.complain(404, "Invalid API parameters",[{'KeyError':'invalid request; try one of the ''following: %s' %(parameters)}])
 
     abort(complaint)
-
-
-if __name__ == '__main__':
-
-    # Parse script vargs
-    parser = argparse.ArgumentParser(
-        description=globals()['__doc__'],
-        formatter_class=argparse.RawDescriptionHelpFormatter)
-
-    parser.add_argument('-d', '--debug', default=False,
-                    help='debugging True/False; default False')
-    parser.add_argument('-c', '--conn_type', default='do_local',
-                    help=('specifies database connection; options include: '
-                          '"local" "do" and "do_local"; check '
-                          'configuration file for details; default "do_local"'))
-    parser.add_argument('-l', '--logging', default=True,
-                    help='logging True/False; default True')
-    parser.add_argument('-a', '--alerts', default=False,
-                    help='email alerts True/False; default False')
-    parser.add_argument('-p', '--port', default=5001,
-    	            help='Port number for API server; default 5001')
-
-    args = parser.parse_args()
-
-	# connection selection
-    conn_type = args.conn_type
-
-    global controller, clerk
-    controller = Controller(conn_type)
-    clerk = controller.clerk
-
-    # Debugging
-    DEBUG = args.debug
-    if DEBUG:
-        DEBUG = True
-
-    '''
-    # Alerts and logging
-    if args.logging:
-        app.config['propagate_exceptions'] = True
-        file_h = clerk.file_handler_setup()
-        app.logger.addHandler(file_h)
-
-    if args.alerts:
-        mail_handler = clerk.mail_handler_setup()
-        app.logger.addHandler(mail_handler)
-    '''
-
-    app.run(host='0.0.0.0', port=args.port, debug=args.debug, use_reloader=True)

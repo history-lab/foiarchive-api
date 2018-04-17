@@ -27,7 +27,7 @@ from sqlalchemy import desc
 from sqlalchemy import asc
 
 
-from api.util.clerk import Clerk
+from api.clerk import Clerk
 
 class Controller(object):
     """
@@ -38,22 +38,20 @@ class Controller(object):
     An object of this class invokes a query across multiple collections
     and sorts the combined results in memory.
     """
-    DECLASS_API = os.getenv("DECLASS_API")
-    CONFIG = os.path.join(DECLASS_API, 'config')
+    ROOT = os.getcwd()
+    CONFIG = os.path.join(ROOT, 'config')
 
-    api_config_file = os.path.join(CONFIG, 'api_config.yml')
-    api_config = yaml.load(open(api_config_file))
+    api_config = yaml.load(open(os.path.join(CONFIG, 'api_config.yml')))
     databases_names = api_config['databases']
     collection_names = api_config['collections']
     entity_names = api_config['entities']
     supported_versions = api_config['supported_versions']
 
-    data_path = os.path.join(DECLASS_API, 'topic_data')
+    data_path = os.path.join(ROOT, 'data/topics')
     topic_token_path = os.path.join(data_path, 'tokens')
     topic_doc_path = os.path.join(data_path, 'docs')
 
-    conn_config_file = os.path.join(CONFIG, 'conn_config.yml')
-    conn_config = yaml.load(open(conn_config_file))
+    conn_config = yaml.load(open(os.path.join(CONFIG, 'conn_config.yml')))
 
     HTTP_STATUS_SUCCESS = 200
     HTTP_STATUS_BAD_REQUEST = 404
@@ -72,7 +70,7 @@ class Controller(object):
         credentials = Controller.conn_config[connection_type]
         username = os.getenv('DECLASS_API_USER') or credentials['user']
         password = os.getenv('DECLASS_API_PW') or credentials['password']
-        host = credentials["host"]
+        host = 'history-lab.org' or credentials['host']
 
         self.Tables = defaultdict(dict)
         self.Entities = defaultdict(dict)
@@ -84,6 +82,7 @@ class Controller(object):
         Engines = {}
         Bases = {}
         Binds = {}
+
         # Create all database connections
         for database in Controller.databases_names:
             # Create engines to connect to databases
@@ -123,7 +122,6 @@ class Controller(object):
             'ddrs',
             'kissinger',
             'cpdoc'
-            # 'cables'
         ]
 
         for collection in collections:
@@ -198,7 +196,6 @@ class Controller(object):
         @rtype:   None
         @return:  Modifies the db_results_flat object and populates entities.
         """
-        table_names = self.Tables[database].keys()
 
         doc_ids = []
         doc_ids_entities = {}

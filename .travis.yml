@@ -2,7 +2,10 @@ language: python
 sudo: required
 python:
   - 3.5
+  - 3.6
 before_install:
   - sudo apt-get install build-essential python-dev libmysqlclient-dev
+install:
+  - python setup.py install
 script:
-  - bash ./SETUP_API.sh
+  - python test.py -c do
