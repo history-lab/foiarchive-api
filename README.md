@@ -1,16 +1,38 @@
 # declass-api
+notes for refactoring + upgrading to python3
 
 [![Build Status](https://travis-ci.org/mnyrop/declass-api.svg?branch=master)](https://travis-ci.org/mnyrop/declass-api)
 [![Dependency Status](https://gemnasium.com/badges/github.com/mnyrop/declass-api.svg)](https://gemnasium.com/github.com/mnyrop/declass-api)
 
-#### dev notes for refactoring + upgrading to python3
+### instructions
+
+#### clone
+```sh
+$ git clone https://github.com/mnyrop/declass-api.git && cd declass-api
+```
+
+#### install dependencies:
+```sh
+$ virtualenv env
+$ source env/bin/activate
+$ pip install -r requirements.txt
+```
+
+#### run
+
+`python run.py`
+
+#### test
+
+`python test.py`
+
 
 ### to do:
 - [x] use modern python
 - [x] secure DB credentials (from user input)
 - [x] reorganize + modularize components
-- [ ] write and use unit tests for BDD/CI
 - [x] pin down and monitor dependencies
+- [ ] write and use unit tests for BDD/CI
 - [ ] re-add and fix `probe_request()` function
 - [ ] document!!!
 
@@ -41,21 +63,3 @@
 - http://127.0.0.1:5001/declass/v0.4/documents/1977ACCRA03397/similar/ (not implemented yet)
 - http://127.0.0.1:5001/declass/v0.4/classification/collection/frus
 - http://127.0.0.1:5001/declass/v0.4/text/
-
-
-### instructions
-
-#### to install dependencies:
-```sh
-virtualenv env
-source env/bin/activate
-env/bin/python setup.py install
-```
-
-#### to run
-
-`python run.py`
-
-#### to test
-
-`python test.py`
