@@ -1,0 +1,7 @@
+Flask>=0.12
+flask-cors>=3.0
+pyyaml>=3.12
+sqlalchemy>=1.2
+elasticsearch>=6.2
+requests>=2.18
+pymysql>=0.7
