@@ -39,9 +39,7 @@ class Controller(object):
     and sorts the combined results in memory.
     """
     ROOT = os.getcwd()
-    CONFIG = os.path.join(ROOT, 'config')
-
-    api_config = yaml.load(open(os.path.join(CONFIG, 'api_config.yml')))
+    api_config = yaml.load(open(os.path.join(ROOT, 'api_config.yml')))
     databases_names = api_config['databases']
     collection_names = api_config['collections']
     entity_names = api_config['entities']
@@ -51,13 +49,11 @@ class Controller(object):
     topic_token_path = os.path.join(data_path, 'tokens')
     topic_doc_path = os.path.join(data_path, 'docs')
 
-    conn_config = yaml.load(open(os.path.join(CONFIG, 'conn_config.yml')))
-
     HTTP_STATUS_SUCCESS = 200
     HTTP_STATUS_BAD_REQUEST = 404
     PAGE_SIZE_DEFAULT = int(api_config['parameters']['page_size'])
 
-    def __init__(self, connection_type):
+    def __init__(self, credentials):
         '''
         Building connections to all databases specified in the api configuration file api_config.yml
         This function creates an engine object for each database, and automatically maps the database tables
@@ -67,10 +63,9 @@ class Controller(object):
         for all future session requests.
         '''
 
-        credentials = Controller.conn_config[connection_type]
-        username = os.getenv('DECLASS_API_USER') or credentials['user']
-        password = os.getenv('DECLASS_API_PW') or credentials['password']
-        host = 'history-lab.org' or credentials['host']
+        username = credentials['user']
+        password = credentials['password']
+        host = credentials['host']
 
         self.Tables = defaultdict(dict)
         self.Entities = defaultdict(dict)

@@ -8,4 +8,4 @@ before_install:
 install:
   - python setup.py install
 script:
-  - python test.py -c do
+  - python test.py

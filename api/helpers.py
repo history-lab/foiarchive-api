@@ -8,10 +8,6 @@ def parse_args():
 
     parser.add_argument('-d', '--debug', default=False,
                     help='debugging True/False; default False')
-    parser.add_argument('-c', '--conn_type', default='do_local',
-                    help=('specifies database connection; options include: '
-                          '"local" "do" and "do_local"; check '
-                          'configuration file for details; default "do_local"'))
     parser.add_argument('-l', '--logging', default=True,
                     help='logging True/False; default True')
     parser.add_argument('-a', '--alerts', default=False,

@@ -40,6 +40,8 @@ env/bin/python setup.py install
 
 #### to run
 
-`python run.py -c do`
+`python run.py`
 
 #### to test
+
+`python test.py`
