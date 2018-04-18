@@ -1,6 +1,16 @@
-## dev notes for migration to python
+## dev notes for api refactoring and upgrade to python3
+[![Build Status](https://travis-ci.org/mnyrop/declass-api.svg?branch=master)](https://travis-ci.org/mnyrop/declass-api)
 
-### results
+### to do:
+- [x] use modern python
+- [x] secure DB credentials (from user input)
+- [x] reorganize + modularize components
+- [ ] write and use unit tests for BDD/CI
+- [ ] pin down and monitor dependencies
+- [ ] re-add and fix `probe_request()` function
+- [ ] document!!!
+
+### current results
 
 #### works (with probe_request() removed)
 - http://127.0.0.1:5001/declass/v0.4/fields
