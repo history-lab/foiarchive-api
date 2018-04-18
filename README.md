@@ -1,12 +1,16 @@
-## dev notes for api refactoring and upgrade to python3
+# declass-api
+
 [![Build Status](https://travis-ci.org/mnyrop/declass-api.svg?branch=master)](https://travis-ci.org/mnyrop/declass-api)
+[![Dependency Status](https://gemnasium.com/badges/github.com/mnyrop/declass-api.svg)](https://gemnasium.com/github.com/mnyrop/declass-api)
+
+#### dev notes for refactoring + upgrading to python3
 
 ### to do:
 - [x] use modern python
 - [x] secure DB credentials (from user input)
 - [x] reorganize + modularize components
 - [ ] write and use unit tests for BDD/CI
-- [ ] pin down and monitor dependencies
+- [x] pin down and monitor dependencies
 - [ ] re-add and fix `probe_request()` function
 - [ ] document!!!
 
