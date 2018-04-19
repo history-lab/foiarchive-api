@@ -26,6 +26,7 @@ class Clerk(object):
         """
         Custom respose function to prepare JSON output to user.
         """
+
         if count is None:
             count = len(data)
 
@@ -36,6 +37,7 @@ class Clerk(object):
             output.update({'page_size':page_size})
         if next_page:
             output.update({'next_page':next_page})
+
         response = make_response(json_encoder(output), resp_code)
 
         return response

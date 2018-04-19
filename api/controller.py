@@ -1613,17 +1613,19 @@ class Controller(object):
         @return:  Array of documents info.
         """
         session = self.Session()
+
         result_list = []
         total_count = 0
 
         for collection in filters['collections']:
             database = self.collection_names[collection]
 
-            table_names = self.Tables[database].keys()
+            table_names = list(self.Tables[database].keys())
             if 'docs' in table_names:
                 docs = self.Tables[database]['docs']
 
                 q = session.query(docs)
+                print(type(q.all()))
                 q = self.__apply_query_filters(session, q, docs, filters, collection)
 
                 db_results_objects = q.all()    # returns all documents
@@ -1993,12 +1995,12 @@ class Controller(object):
         This function returns a list of the supported collection names.
         """
         if display:
-            data = {'collections': self.collection_names.keys()}
+            data = {'collections': list(self.collection_names.keys())}
             response_code = Controller.HTTP_STATUS_SUCCESS
             response = self.clerk.process(data, response_code, page=0)
             return response
         else:
-            return self.collection_names.keys()
+            return list(self.collection_names.keys())
 
 
     def get_entity_info(self, entity, collection, page, page_size, request_url):
@@ -2231,7 +2233,7 @@ class Controller(object):
                                      ])
 
         database = self.collection_names[collection]
-        table_names = self.Tables[database].keys()
+        table_names = list(self.Tables[database].keys())
 
         enabled_collections = ['ddrs', 'frus', 'statedeptcables', 'clinton']
         if collection in enabled_collections:
@@ -2281,7 +2283,7 @@ class Controller(object):
                                      ])
 
         database = self.collection_names[collection]
-        table_names = self.Tables[database].keys()
+        table_names = list(self.Tables[database].keys())
 
         enabled_collections = ['frus', 'clinton']
         if collection in enabled_collections:

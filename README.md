@@ -52,11 +52,12 @@ $ pip install -r requirements.txt
 - http://127.0.0.1:5001/declass/v0.4/topics/doc/frus1969-76ve14p1d26
 
 #### does not work
-- http://127.0.0.1:5001/declass/v0.4/collections
+- ~~http://127.0.0.1:5001/declass/v0.4/collections~~ <~ __fixed__
 - http://127.0.0.1:5001/declass/v0.4/visualizations/frus/classification_countries/
-- http://127.0.0.1:5001/declass/v0.4/documents/?id=1977ACCRA03397
-- http://127.0.0.1:5001/declass/v0.4/textdrop/?text=test
-- http://127.0.0.1:5001/declass/v0.4/topics/collection/frus
+- http://127.0.0.1:5001/declass/v0.4/?ids=frus1945-50Inteld105,1974STATE085546
+- http://127.0.0.1:5001/declass/v0.4/?start_date=1947-01-01&end_date=1950-12-01
+- http://127.0.0.1:5001/declass/v0.4/?date=1945-10-02
+
 
 #### not clear
 - http://127.0.0.1:5001/declass/v0.4/overview/

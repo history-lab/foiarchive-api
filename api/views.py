@@ -103,7 +103,7 @@ def declass_entity_info(version):
 
     page = int(request.args.get('page', 1))
 
-    page_size = int(request.args.get('page_size', Controller.PAGE_SIZE_DEFAULT))
+    page_size = int(request.args.get('page_size', controller.PAGE_SIZE_DEFAULT))
 
     return controller.get_entity_info(entity, collection, page, page_size, request.url)
 
@@ -172,7 +172,7 @@ def declass_overview(version):
 
 
     # Verifying if geo_ids is passed in properly
-    passed_params = [] if (not request.args.items()) else [i[0].lower() for i in request.args.items()]
+    passed_params = [] if (not list(request.args.items())) else [i[0].lower() for i in list(request.args.items())]
     entities = clerk.valid_entities(passed_params, request)
     if not entities:
         complain("Entities", accepted_params)
@@ -461,14 +461,14 @@ def api(version):
     # Analyze user input to validate requested parameters and fields
     #--------------------------------------------------------------------------#
 
-    passed_params = [] if (not request.args.items()) else [i[0].lower() for i in request.args.items()]
+    passed_params = [] if (not list(request.args.items())) else [i[0].lower() for i in list(request.args.items())]
     passed_fields = [] if (not request.args.get('fields')) else request.args.get('fields').lower().split(',')
     filters = {}
     filters['start_date'] = request.args.get('start_date',  None)
     filters['end_date'] =  request.args.get('end_date', None)
     filters['exact_date'] = request.args.get('date', None)
     filters['page'] = request.args.get('page')
-    filters['page_size'] = int(request.args.get('page_size', Controller.PAGE_SIZE_DEFAULT))
+    filters['page_size'] = int(request.args.get('page_size', controller.PAGE_SIZE_DEFAULT))
     filters['page_start_index'] = clerk.set_page_start_index(filters['page'])
     filters['page_url'] = request.url
 
@@ -736,14 +736,14 @@ def declass_full_text_search(version):
     """
 
     accepted_params = {'search', 'page_size', 'page', 'start_date', 'end_date', 'collections'}
-    passed_params = [] if (not request.args.items()) else [i[0].lower() for i in request.args.items()]
+    passed_params = [] if (not list(request.args.items())) else [i[0].lower() for i in list(request.args.items())]
 
     filters = {}
     filters['start_date'] = request.args.get('start_date',  None)
     filters['end_date'] =  request.args.get('end_date', None)
     filters['exact_date'] = None
     filters['page'] = request.args.get('page', '1')
-    filters['page_size'] = request.args.get('page_size', str(Controller.PAGE_SIZE_DEFAULT))
+    filters['page_size'] = request.args.get('page_size', str(controller.PAGE_SIZE_DEFAULT))
     filters['page_url'] = request.url
     search_text = request.args.get('search')
 
@@ -807,24 +807,25 @@ def probe_request(version, request, accepted_params=None):
     @rtype:   None
     @return:  Returns an error message if the url is unacceptable.
     """
-    # if not clerk.is_valid_version(version):
-    #     complain("Version")
-    #
-    # if request.args.items():
-    #     # print(request.args.items)
-    #     if accepted_params is None:
-    #         complain("NoParameters")
-    #
-    #     passed_params = [] if (not request.args.items()) else [i[0].lower() for i in request.args.items()]
-    #
-    #     if not clerk.valid_params(passed_params, accepted_params, request):
-    #         complain("Parameters", accepted_params)
-    #
-    # if clerk.is_missing_param_key_val(request):
-    #     complain("Partial")
-    #
-    # if not clerk.is_valid_pagination(request):
-    #     complain("Pagination")
+    if not clerk.is_valid_version(version):
+        complain("Version")
+
+    if list(request.args.items()):
+        request_args = list(request.args.items())
+        print(request_args)
+        if accepted_params is None:
+            complain("NoParameters")
+
+        passed_params = [] if (not request_args) else [i[0].lower() for i in request_args]
+
+        if not clerk.valid_params(passed_params, accepted_params, request):
+            complain("Parameters", accepted_params)
+
+    if clerk.is_missing_param_key_val(request):
+        complain("Partial")
+
+    if not clerk.is_valid_pagination(request):
+        complain("Pagination")
 
 
 def complain(message, parameters=None):
