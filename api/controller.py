@@ -191,7 +191,6 @@ class Controller(object):
         @rtype:   None
         @return:  Modifies the db_results_flat object and populates entities.
         """
-
         doc_ids = []
         doc_ids_entities = {}
         for row in db_results_flat:
@@ -211,8 +210,8 @@ class Controller(object):
                             .join(countries)\
                             .group_by(country_doc.doc_id)
 
-                country_list = q.all()
-
+                #country_list = q.all()
+                country_list = q.limit(1000)
                 for (doc_id, countries) in country_list:
                     doc_ids_entities[doc_id]["countries"] = ", ".join([c.strip() for c in countries.split(',')])
 
@@ -226,8 +225,8 @@ class Controller(object):
                             .filter(person_doc.doc_id.in_(doc_ids))\
                             .group_by(person_doc.doc_id)
 
-                persons_list = q.all()
-
+                #persons_list = q.all()
+                persons_list = q.limit(1000)
                 for (doc_id, persons) in persons_list:
                     doc_ids_entities[doc_id]["persons"] = ", ".join([p.strip() for p in persons.split(',')])
 
@@ -240,8 +239,8 @@ class Controller(object):
                             .filter(topic_doc.doc_id.in_(doc_ids))\
                             .group_by(topic_doc.doc_id)
 
-                topics_list = q.all()
-
+                #topics_list = q.all()
+                topics_list = q.limit(1000)
                 for (doc_id, topics) in topics_list:
                     if topics:
                         doc_ids_entities[doc_id]["topics"] = ", ".join([t.strip() for t in topics.split(',')])
