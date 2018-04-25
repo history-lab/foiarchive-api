@@ -53,10 +53,10 @@ $ pip install -r requirements.txt
 
 #### does not work
 - ~~http://127.0.0.1:5001/declass/v0.4/collections~~ <~ __fixed__
-- http://127.0.0.1:5001/declass/v0.4/visualizations/frus/classification_countries/
-- http://127.0.0.1:5001/declass/v0.4/?ids=frus1945-50Inteld105,1974STATE085546
+- ~~http://127.0.0.1:5001/declass/v0.4/?ids=frus1945-50Inteld105,1974STATE085546~~ <~ __fixed__
 - http://127.0.0.1:5001/declass/v0.4/?start_date=1947-01-01&end_date=1950-12-01
 - http://127.0.0.1:5001/declass/v0.4/?date=1945-10-02
+- http://127.0.0.1:5001/declass/v0.4/visualizations/frus/classification_countries/
 
 
 #### not clear
