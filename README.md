@@ -14,6 +14,7 @@ $ git clone https://github.com/mnyrop/declass-api.git && cd declass-api
 #### install dependencies:
 ```sh
 $ virtualenv env
+($ python3 -m virtualenv env)
 $ source env/bin/activate
 $ pip install -r requirements.txt
 ```
