@@ -2,7 +2,7 @@
 notes for refactoring + upgrading to python3
 
 [![Build Status](https://travis-ci.org/mnyrop/declass-api.svg?branch=master)](https://travis-ci.org/mnyrop/declass-api)
-[![Dependency Status](https://gemnasium.com/badges/github.com/mnyrop/declass-api.svg)](https://gemnasium.com/github.com/mnyrop/declass-api)
+[![](https://img.shields.io/librariesio/github/mnyrop/declass-api.svg)](https://libraries.io/github/mnyrop/declass-api) 
 
 ### instructions
 
