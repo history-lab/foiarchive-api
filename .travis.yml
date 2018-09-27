@@ -6,5 +6,6 @@ python:
   - 3.6
 before_install:
   - sudo apt-get install build-essential python-dev libmysqlclient-dev
+  - pip install -U setuptools
 script:
   - python test.py
