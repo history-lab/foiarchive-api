@@ -366,10 +366,8 @@ class Clerk(object):
         """
         if not has_next:
             return
-
-        #url = unquote(url).decode('utf-8')  # Converts the url into utf-8 (for escaped % parameters)
-        url = unquote(url) 
-        url = re.sub(r'&page='+old_link, r'', url)
+        
+        url = re.sub(r'&page='+old_link, r'', unquote(url))
         return url + '&page=%s' % next_link
 
 
