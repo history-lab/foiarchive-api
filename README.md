@@ -2,7 +2,7 @@
 notes for refactoring + upgrading to python3
 
 [![Build Status](https://travis-ci.org/mnyrop/declass-api.svg?branch=master)](https://travis-ci.org/mnyrop/declass-api)
-[![Dependency Status](https://gemnasium.com/badges/github.com/mnyrop/declass-api.svg)](https://gemnasium.com/github.com/mnyrop/declass-api)
+[![](https://img.shields.io/librariesio/github/mnyrop/declass-api.svg)](https://libraries.io/github/mnyrop/declass-api) 
 
 ### instructions
 
@@ -13,7 +13,7 @@ $ git clone https://github.com/mnyrop/declass-api.git && cd declass-api
 
 #### install dependencies:
 ```sh
-$ virtualenv env
+$ virtualenv env # might need to run as `python3 -m virtualenv env`
 $ source env/bin/activate
 $ pip install -r requirements.txt
 ```
@@ -53,10 +53,10 @@ $ pip install -r requirements.txt
 
 #### does not work
 - ~~http://127.0.0.1:5001/declass/v0.4/collections~~ <~ __fixed__
-- http://127.0.0.1:5001/declass/v0.4/visualizations/frus/classification_countries/
-- http://127.0.0.1:5001/declass/v0.4/?ids=frus1945-50Inteld105,1974STATE085546
+- ~~http://127.0.0.1:5001/declass/v0.4/?ids=frus1945-50Inteld105,1974STATE085546~~ <~ __fixed__
 - http://127.0.0.1:5001/declass/v0.4/?start_date=1947-01-01&end_date=1950-12-01
 - http://127.0.0.1:5001/declass/v0.4/?date=1945-10-02
+- http://127.0.0.1:5001/declass/v0.4/visualizations/frus/classification_countries/
 
 
 #### not clear

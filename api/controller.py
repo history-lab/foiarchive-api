@@ -191,12 +191,13 @@ class Controller(object):
         @rtype:   None
         @return:  Modifies the db_results_flat object and populates entities.
         """
-
         doc_ids = []
         doc_ids_entities = {}
         for row in db_results_flat:
             doc_ids.append(row['id'])
             doc_ids_entities[row['id']] = {'countries':None, 'persons':None}
+
+        table_names = list(self.Tables[database].keys())
 
         if doc_ids:
             # Get countries related to doc_id
@@ -209,8 +210,8 @@ class Controller(object):
                             .join(countries)\
                             .group_by(country_doc.doc_id)
 
-                country_list = q.all()
-
+                #country_list = q.all()
+                country_list = q.limit(1000)
                 for (doc_id, countries) in country_list:
                     doc_ids_entities[doc_id]["countries"] = ", ".join([c.strip() for c in countries.split(',')])
 
@@ -224,8 +225,8 @@ class Controller(object):
                             .filter(person_doc.doc_id.in_(doc_ids))\
                             .group_by(person_doc.doc_id)
 
-                persons_list = q.all()
-
+                #persons_list = q.all()
+                persons_list = q.limit(1000)
                 for (doc_id, persons) in persons_list:
                     doc_ids_entities[doc_id]["persons"] = ", ".join([p.strip() for p in persons.split(',')])
 
@@ -238,8 +239,8 @@ class Controller(object):
                             .filter(topic_doc.doc_id.in_(doc_ids))\
                             .group_by(topic_doc.doc_id)
 
-                topics_list = q.all()
-
+                #topics_list = q.all()
+                topics_list = q.limit(1000)
                 for (doc_id, topics) in topics_list:
                     if topics:
                         doc_ids_entities[doc_id]["topics"] = ", ".join([t.strip() for t in topics.split(',')])
@@ -283,7 +284,7 @@ class Controller(object):
         for database in db_locations:
             docs = self.Tables[database.db_name]['docs']
             q = session.query(docs).filter(docs.id.in_(doc_ids))
-            q = self.__apply_query_filters(session, q, docs, filters, collection=None)
+            # q = self.__apply_query_filters(session, q, docs, filters, collection=None)
 
             db_results_objects = q.all()    # returns all documents
             db_results_flat = self.__package_db_results(db_results_objects, filters)
@@ -337,7 +338,7 @@ class Controller(object):
 
                 q = session.query(docs).filter(docs.id.in_(person_query))
 
-                q = self.__apply_query_filters(session, q, docs, filters, collection)
+                # q = self.__apply_query_filters(session, q, docs, filters, collection)
                 db_results_objects = q.all()    # returns all documents
 
                 if len(db_results_objects) > 0:
@@ -410,7 +411,7 @@ class Controller(object):
 
                 q = session.query(docs).filter(docs.id.in_(country_query))
 
-                q = self.__apply_query_filters(session, q, docs, filters, collection)
+                # q = self.__apply_query_filters(session, q, docs, filters, collection)
                 db_results_objects = q.all()    # returns all documents
 
                 if len(db_results_objects) > 0:
@@ -483,7 +484,7 @@ class Controller(object):
 
                 q = session.query(docs).filter(docs.id.in_(topic_query))
 
-                q = self.__apply_query_filters(session, q, docs, filters, collection)
+                # q = self.__apply_query_filters(session, q, docs, filters, collection)
                 db_results_objects = q.all()    # returns all documents
 
                 if len(db_results_objects) > 0:
@@ -556,7 +557,7 @@ class Controller(object):
 
                 q = session.query(docs).filter(docs.id.in_(classification_query))
 
-                q = self.__apply_query_filters(session, q, docs, filters, collection)
+                # q = self.__apply_query_filters(session, q, docs, filters, collection)
                 db_results_objects = q.all()    # returns all documents
 
                 if len(db_results_objects) > 0:
@@ -641,7 +642,7 @@ class Controller(object):
 
                 q = session.query(docs).filter(and_(docs.id.in_(person_query), docs.id.in_(classification_query)))
 
-                q = self.__apply_query_filters(session, q, docs, filters, collection)
+                # q = self.__apply_query_filters(session, q, docs, filters, collection)
                 db_results_objects = q.all()    # executes query and returns all documents
 
                 if len(db_results_objects) > 0:
@@ -727,7 +728,7 @@ class Controller(object):
 
                 q = session.query(docs).filter(and_(docs.id.in_(classification_query), docs.id.in_(country_query)))
 
-                q = self.__apply_query_filters(session, q, docs, filters, collection)
+                # q = self.__apply_query_filters(session, q, docs, filters, collection)
                 db_results_objects = q.all()    # executes query and returns all documents
 
                 if len(db_results_objects) > 0:
@@ -812,7 +813,7 @@ class Controller(object):
 
                 q = session.query(docs).filter(and_(docs.id.in_(topic_query), docs.id.in_(classification_query)))
 
-                q = self.__apply_query_filters(session, q, docs, filters, collection)
+                # q = self.__apply_query_filters(session, q, docs, filters, collection)
                 db_results_objects = q.all()    # executes query and returns all documents
 
                 if len(db_results_objects) > 0:
@@ -897,7 +898,7 @@ class Controller(object):
 
                 q = session.query(docs).filter(and_(docs.id.in_(person_query), docs.id.in_(country_query)))
 
-                q = self.__apply_query_filters(session, q, docs, filters, collection)
+                # q = self.__apply_query_filters(session, q, docs, filters, collection)
                 db_results_objects = q.all()    # executes query and returns all documents
 
                 if len(db_results_objects) > 0:
@@ -983,7 +984,7 @@ class Controller(object):
 
                 q = session.query(docs).filter(and_(docs.id.in_(person_query), docs.id.in_(topic_query)))
 
-                q = self.__apply_query_filters(session, q, docs, filters, collection)
+                # q = self.__apply_query_filters(session, q, docs, filters, collection)
                 db_results_objects = q.all()    # executes query and returns all documents
 
                 if len(db_results_objects) > 0:
@@ -1068,7 +1069,7 @@ class Controller(object):
 
                 q = session.query(docs).filter(and_(docs.id.in_(topic_query), docs.id.in_(country_query)))
 
-                q = self.__apply_query_filters(session, q, docs, filters, collection)
+                # q = self.__apply_query_filters(session, q, docs, filters, collection)
                 db_results_objects = q.all()    # executes query and returns all documents
 
                 if len(db_results_objects) > 0:
@@ -1166,7 +1167,7 @@ class Controller(object):
 
                 q = session.query(docs).filter(and_(docs.id.in_(topic_query), docs.id.in_(country_query), docs.id.in_(person_query)))
 
-                q = self.__apply_query_filters(session, q, docs, filters, collection)
+                # q = self.__apply_query_filters(session, q, docs, filters, collection)
                 db_results_objects = q.all()    # executes query and returns all documents
 
                 if len(db_results_objects) > 0:
@@ -1263,7 +1264,7 @@ class Controller(object):
 
                 q = session.query(docs).filter(and_(docs.id.in_(topic_query), docs.id.in_(classification_query), docs.id.in_(person_query)))
 
-                q = self.__apply_query_filters(session, q, docs, filters, collection)
+                # q = self.__apply_query_filters(session, q, docs, filters, collection)
                 db_results_objects = q.all()    # executes query and returns all documents
 
                 if len(db_results_objects) > 0:
@@ -1360,7 +1361,7 @@ class Controller(object):
 
                 q = session.query(docs).filter(and_(docs.id.in_(topic_query), docs.id.in_(country_query), docs.id.in_(classification_query)))
 
-                q = self.__apply_query_filters(session, q, docs, filters, collection)
+                # q = self.__apply_query_filters(session, q, docs, filters, collection)
                 db_results_objects = q.all()    # executes query and returns all documents
 
                 if len(db_results_objects) > 0:
@@ -1457,7 +1458,7 @@ class Controller(object):
 
                 q = session.query(docs).filter(and_(docs.id.in_(classification_query), docs.id.in_(country_query), docs.id.in_(person_query)))
 
-                q = self.__apply_query_filters(session, q, docs, filters, collection)
+                # q = self.__apply_query_filters(session, q, docs, filters, collection)
                 db_results_objects = q.all()    # executes query and returns all documents
 
                 if len(db_results_objects) > 0:
@@ -1567,7 +1568,7 @@ class Controller(object):
 
                 q = session.query(docs).filter(and_(docs.id.in_(topic_query), docs.id.in_(country_query), docs.id.in_(person_query), docs.id.in_(classification_query)))
 
-                q = self.__apply_query_filters(session, q, docs, filters, collection)
+                # q = self.__apply_query_filters(session, q, docs, filters, collection)
                 db_results_objects = q.all()    # executes query and returns all documents
 
                 if len(db_results_objects) > 0:
@@ -1625,8 +1626,7 @@ class Controller(object):
                 docs = self.Tables[database]['docs']
 
                 q = session.query(docs)
-                print(type(q.all()))
-                q = self.__apply_query_filters(session, q, docs, filters, collection)
+                # q = self.__apply_query_filters(session, q, docs, filters, collection)
 
                 db_results_objects = q.all()    # returns all documents
 
