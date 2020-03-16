@@ -5,29 +5,15 @@ import operator
 import elasticsearch
 import requests
 import json
-import pymysql
 
 from collections import defaultdict
 from datetime import date, datetime, timedelta
-from sqlalchemy import Column, Integer, String
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
-from sqlalchemy import or_
-from sqlalchemy import and_
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import relationship
-from sqlalchemy.orm import load_only
-from sqlalchemy.types import VARBINARY
-from sqlalchemy import func
-from sqlalchemy.orm import subqueryload
-from sqlalchemy.orm import joinedload
+from sqlalchemy import create_engine, and_, func, desc, asc
+from sqlalchemy.orm import load_only, sessionmaker
 from sqlalchemy.ext.automap import automap_base
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import desc
-from sqlalchemy import asc
-
 
 from api.clerk import Clerk
+
 
 class Controller(object):
     """
@@ -39,7 +25,8 @@ class Controller(object):
     and sorts the combined results in memory.
     """
     ROOT = os.getcwd()
-    api_config = yaml.load(open(os.path.join(ROOT, 'api_config.yml')))
+    api_config = yaml.load(open(os.path.join(ROOT, 'api_config.yml')),
+                           Loader=yaml.SafeLoader)
     databases_names = api_config['databases']
     collection_names = api_config['collections']
     entity_names = api_config['entities']
@@ -55,12 +42,13 @@ class Controller(object):
 
     def __init__(self, credentials):
         '''
-        Building connections to all databases specified in the api configuration file api_config.yml
-        This function creates an engine object for each database, and automatically maps the database tables
+        Building connections to all databases specified in the api
+        configuration file api_config.yml. This function creates an engine
+        object for each database, and automatically maps the database tables
         using SQLAlchemy's reflection Base reflection property.
 
-        A Session factory containing the engines and table properties is prepared once and made available
-        for all future session requests.
+        A Session factory containing the engines and table properties is
+        prepared once and made available for all future session requests.
         '''
 
         username = credentials['user']
@@ -81,7 +69,12 @@ class Controller(object):
         # Create all database connections
         for database in Controller.databases_names:
             # Create engines to connect to databases
-            Engines[database] = create_engine('mysql+pymysql://' + str(username) + ':' + str(password) + '@' + str(host) + '/' + str(database) + '?charset=utf8&use_unicode=1', pool_recycle=3600)
+            Engines[database] = create_engine('mysql+pymysql://' +
+                                              str(username) + ':' +
+                                              str(password) + '@' + str(host) +
+                                              '/' + str(database) +
+                                              '?charset=utf8&use_unicode=1',
+                                              pool_recycle=3600)
             # Reflect the tables
             Bases[database] = automap_base()
             Bases[database].prepare(Engines[database], reflect=True)
@@ -91,18 +84,17 @@ class Controller(object):
             for table in Bases[database].classes:
                 self.Tables[database][table.__name__] = table
 
-            # Explicitly store the list of available entities for a specific database
+            # Store the list of available entities for a specific database
             for entity in Controller.entity_names:
                 if entity in self.Tables[database].keys():
                     self.Entities[database].append(entity)
 
-            Binds[ Bases[database] ] = Engines[database]
+            Binds[Bases[database]] = Engines[database]
 
         # Create Factory class for the sessions
         self.Session = sessionmaker(binds=Binds)
 
         self.__init_topics()
-
 
     def __init_topics(self):
         """

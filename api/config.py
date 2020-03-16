@@ -9,7 +9,8 @@ if os.getenv('CI'):
     }
 else:
     if os.path.exists('credentials.yml'):
-        credentials = yaml.load(open('credentials.yml'))
+        credentials = yaml.load(open('credentials.yml'),
+                                Loader=yaml.SafeLoader)
     else:
         credentials = {
             'host':     input("host: "),
