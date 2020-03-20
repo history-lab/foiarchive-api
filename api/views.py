@@ -4,33 +4,22 @@ object and a Clerk object to communicate with the Declass Database and
 return JSON formatted responses.
 """
 
-import os
-import argparse
-from datetime import date
-from flask import Flask, redirect, request, abort, jsonify
-from flask_cors import cross_origin
 
+from flask import redirect, request, abort
+from flask_cors import cross_origin
 from api import app, clerk, controller
 
-# ---------------------- FLASK ENGINE OPERATIONS ---------------------- #
 
-
-@app.route('/shutdown', methods=['POST'])
-def shutdown():
-    shutdown_server()
-    return 'Server shutting down...'
-
-
-@app.route('/declass')
+@app.route('/')
 @cross_origin()
-def declass_root():
+def api_root():
     """
     Displays a welcome text to the user.
 
     @rtype:   string
     @return:  API welcome text.
     """
-    return 'Welcome to the Declassification Engine REST API'
+    return 'Welcome to the FOIArchive REST API'
 
 
 @app.route('/declass/<version>/fields')
