@@ -22,7 +22,7 @@ def api_root():
     return 'Welcome to the FOIArchive REST API'
 
 
-@app.route('/declass/<version>/fields')
+@app.route('/<version>/fields')
 @cross_origin()
 def declass_fields(version):
     """
@@ -38,7 +38,7 @@ def declass_fields(version):
     return controller.get_config_fields(display=True)
 
 
-@app.route('/declass/<version>/collections')
+@app.route('/<version>/collections')
 @cross_origin()
 def declass_available_collections(version):
     """
@@ -52,7 +52,7 @@ def declass_available_collections(version):
     return controller.get_collection_names(display=True)
 
 
-@app.route('/declass/<version>/entity_info/')
+@app.route('/<version>/entity_info/')
 @cross_origin()
 def declass_entity_info(version):
     """
@@ -61,9 +61,9 @@ def declass_entity_info(version):
     for a collection.
 
     The end-point can be called in the following ways:
-    /declass/<version>/entity_info/?collection=<colleciton_name>
-    /declass/<version>/entity_info/?collection=<colleciton_name>&entity=<entity_name>
-    /declass/<version>/entity_info/?collection=<colleciton_name>&entity=<entity_name>&page_size=<number>&page=<number>
+    /<version>/entity_info/?collection=<colleciton_name>
+    /<version>/entity_info/?collection=<colleciton_name>&entity=<entity_name>
+    /<version>/entity_info/?collection=<colleciton_name>&entity=<entity_name>&page_size=<number>&page=<number>
 
     @type  collection: string
     @param colleciton: The name of a collection. (ex. frus)
@@ -92,12 +92,14 @@ def declass_entity_info(version):
 
     page = int(request.args.get('page', 1))
 
-    page_size = int(request.args.get('page_size', controller.PAGE_SIZE_DEFAULT))
+    page_size = int(request.args.get('page_size',
+                                     controller.PAGE_SIZE_DEFAULT))
 
-    return controller.get_entity_info(entity, collection, page, page_size, request.url)
+    return controller.get_entity_info(entity, collection, page, page_size,
+                                      request.url)
 
 
-@app.route('/declass/<version>/overview/')
+@app.route('/<version>/overview/')
 @cross_origin()
 def declass_overview(version):
     """
@@ -105,11 +107,11 @@ def declass_overview(version):
     entities of a particular collection.
 
     The end-point can be called in the following ways:
-    /declass/<version>/overview/?collection=<colleciton_name>&entity=<entity_name>&start_date=<date1>&end_date=<date2>
+    /<version>/overview/?collection=<colleciton_name>&entity=<entity_name>&start_date=<date1>&end_date=<date2>
 
     The searchable entities are countries, topics, and persons. One can
     also update the topics and persons entities given country_ids:
-    /declass/<version>/overview/?collection=<colleciton_name>&entity=<entity_name>&start_date=<date1>&end_date=<date2>&geo_ids=<country_id>
+    /<version>/overview/?collection=<colleciton_name>&entity=<entity_name>&start_date=<date1>&end_date=<date2>&geo_ids=<country_id>
 
     @type  collection: string
     @param colleciton: The name of a collection. (ex. frus)
@@ -121,8 +123,8 @@ def declass_overview(version):
     @type  end_date: date
     @param end_date: The ending date for query selection.
     @type  geo_ids: string
-    @param geo_ids: Country ids (optional) This provides an updated count for topics
-        and persons given selected countries.
+    @param geo_ids: Country ids (optional) This provides an updated count for
+        topics and persons given selected countries.
     @type  limit: number
     @param limit: The number of records to be returned for the query.
 
@@ -130,24 +132,26 @@ def declass_overview(version):
     @return:  Array of top counts for persons or countries or topics
     for a particular collection.
     """
-    accepted_params = {'entity', 'collection', 'start_date', 'end_date', 'geo_ids', 'limit'}
+    accepted_params = {'entity', 'collection', 'start_date', 'end_date',
+                       'geo_ids', 'limit'}
     probe_request(version, request, accepted_params)
 
-
     entity = request.args.get('entity', None)
-    if entity != 'persons' and entity != 'countries' and entity != 'topics' and entity != 'classifications':
-    	complain('InvalidValues')
+    if entity != 'persons' and entity != 'countries' and \
+       entity != 'topics' and entity != 'classifications':
+        complain('InvalidValues')
 
     filters = {}
-    filters['collections'] = [] if (not request.args.get('collection')) else [request.args.get('collection').lower()]
+    filters['collections'] = [] if (not request.args.get('collection')) else \
+                             [request.args.get('collection').lower()]
     filters['start_date'] = request.args.get('start_date',  None)
-    filters['end_date'] =  request.args.get('end_date', None)
+    filters['end_date'] = request.args.get('end_date', None)
     filters['exact_date'] = None
     filters['page'] = None
 
     # Check if user entered an invalid filter
     if not filters['collections']:
-    	complain('InvalidValues')
+        complain('InvalidValues')
 
     if not clerk.valid_filters(filters):
         complain("Filters", accepted_params)
@@ -159,9 +163,9 @@ def declass_overview(version):
 
     limit = request.args.get('limit', 100, int)
 
-
     # Verifying if geo_ids is passed in properly
-    passed_params = [] if (not list(request.args.items())) else [i[0].lower() for i in list(request.args.items())]
+    passed_params = [] if (not list(request.args.items())) else \
+                    [i[0].lower() for i in list(request.args.items())]
     entities = clerk.valid_entities(passed_params, request)
     if not entities:
         complain("Entities", accepted_params)
@@ -170,12 +174,13 @@ def declass_overview(version):
     geo_logic = entities['geo_logic']
 
     if geo_logic and geo_logic != "OR":
-    	complain('InvalidValues')
+        complain('InvalidValues')
 
-    return controller.get_overview_data(entity, limit, geo_ids, filters, request.url)
+    return controller.get_overview_data(entity, limit, geo_ids, filters,
+                                        request.url)
 
 
-@app.route('/declass/<version>/visualizations/doc_cnts/')
+@app.route('/<version>/visualizations/doc_cnts/')
 @cross_origin()
 def declass_viz_doc_cnts(version):
     """
@@ -187,7 +192,7 @@ def declass_viz_doc_cnts(version):
     return controller.get_viz_docs('doc_cnts')
 
 
-@app.route('/declass/<version>/visualizations/doc_collection/')
+@app.route('/<version>/visualizations/doc_collection/')
 @cross_origin()
 def declass_viz_doc_collect(version):
     """
@@ -199,7 +204,7 @@ def declass_viz_doc_collect(version):
     return controller.get_viz_docs('doc_collection')
 
 
-@app.route('/declass/<version>/visualizations/doc_cnts_year/')
+@app.route('/<version>/visualizations/doc_cnts_year/')
 @cross_origin()
 def declass_viz_doc_counts_year(version):
     """
@@ -211,7 +216,7 @@ def declass_viz_doc_counts_year(version):
     return controller.get_viz_docs('doc_cnts_year')
 
 
-@app.route('/declass/<version>/visualizations/overview/')
+@app.route('/<version>/visualizations/overview/')
 @cross_origin()
 def declass_viz_overview(version):
     """
@@ -221,16 +226,20 @@ def declass_viz_overview(version):
     database = request.args.get('database', 'frus')
     # Validate database input.
     databases = database.split(',')
-    acceptable_databases = ['frus', 'statedeptcables', 'ddrs', 'kissinger', 'clinton', 'cpdoc', 'cabinet', 'pdb']
+    acceptable_databases = ['frus', 'statedeptcables', 'ddrs', 'kissinger',
+                            'clinton', 'cpdoc', 'cabinet', 'pdb']
     if set(databases) - set(acceptable_databases):
-        return clerk.complain(404, "Invalid API parameters", "Invalid Database name(s).")
+        return clerk.complain(404, "Invalid API parameters",
+                                   "Invalid Database name(s).")
 
     table = request.args.get('table', 'top_persons')
     # Validate table input.
     tables = table.split(',')
-    acceptable_tables = ['top_persons', 'top_countries', 'top_topics', 'doc_counts', 'top_classifications']
+    acceptable_tables = ['top_persons', 'top_countries', 'top_topics',
+                         'doc_counts', 'top_classifications']
     if set(tables) - set(acceptable_tables):
-        return clerk.complain(404, "Invalid API parameters", "Invalid table name(s).")
+        return clerk.complain(404, "Invalid API parameters",
+                                   "Invalid table name(s).")
 
     limit = request.args.get('limit', 10)
     # Validate limit input.
@@ -243,12 +252,14 @@ def declass_viz_overview(version):
         except ValueError:
             limit_error = True
         if limit_error or limit <= 0:
-            return clerk.complain(404, "Invalid API parameters", "limit must be a positive integer.")
+            return clerk.complain(404, "Invalid API parameters",
+                                       "limit must be a positive integer.")
 
     return controller.get_viz_overview(databases, tables, limit)
 
 
-@app.route('/declass/<version>/visualizations/<collection_name>/classification_topics/')
+@app.route('/<version>/visualizations/<collection_name>/\
+classification_topics/')
 @cross_origin()
 def declass_viz_classification_topics(version, collection_name):
     """
@@ -258,7 +269,9 @@ def declass_viz_classification_topics(version, collection_name):
 
     return controller.get_classification_topics(collection_name)
 
-@app.route('/declass/<version>/visualizations/<collection_name>/classification_countries/')
+
+@app.route('/<version>/visualizations/<collection_name>/\
+classification_countries/')
 @cross_origin()
 def declass_viz_classification_countries(version, collection_name):
     """
@@ -267,7 +280,9 @@ def declass_viz_classification_countries(version, collection_name):
     probe_request(version, request)
     return controller.get_classification_countries(collection_name)
 
-@app.route('/declass/<version>/visualizations/<collection_name>/classification_persons/')
+
+@app.route('/<version>/visualizations/<collection_name>/\
+classification_persons/')
 @cross_origin()
 def declass_viz_classification_persons(version, collection_name):
     """
@@ -276,7 +291,8 @@ def declass_viz_classification_persons(version, collection_name):
     probe_request(version, request)
     return controller.get_classification_persons(collection_name)
 
-@app.route('/declass/<version>/random/')
+
+@app.route('/<version>/random/')
 @cross_origin()
 def random_doc_ids(version):
     """
@@ -284,8 +300,8 @@ def random_doc_ids(version):
     all available collections.
 
     Can be invoked by:
-    /declass/v0.4/random
-    /declass/v0.4/random/?limit=<number>
+    /v0.4/random
+    /v0.4/random/?limit=<number>
 
     @type  limit: number (optional, default 10)
     @param limit: The number of records to be returned for the query.
@@ -305,17 +321,17 @@ def random_doc_ids(version):
     return controller.get_random_doc_ids(limit)
 
 
-@app.route('/declass/<version>/documents/<doc_ids>/')
+@app.route('/<version>/documents/<doc_ids>/')
 @cross_origin()
 def documents(version, doc_ids):
     """
     This end-point redirects traffic to another end-point.
     """
-    return redirect('/declass/%s/?ids=%s&%s' % (
+    return redirect('/%s/?ids=%s&%s' % (
         version, doc_ids, request.query_string), code=303)
 
 
-@app.route('/declass/<version>/textdrop/')
+@app.route('/<version>/textdrop/')
 @cross_origin()
 def declass_text_drop(version):
     """
@@ -324,12 +340,12 @@ def declass_text_drop(version):
     contain similar text. It is powered by Merriam.
 
     Can be invoked by:
-    /declass/v0.4/textdrop/?text=<long_text>
-    /declass/v0.4/textdrop/?text=<long_text>&limit=<number>
+    /v0.4/textdrop/?text=<long_text>
+    /v0.4/textdrop/?text=<long_text>&limit=<number>
 
     @type  text: string
     @param text: A piece of text to use for finding similar documents.
-    @type  limit: number (optional, default 10)
+    @type  limit: number (optional, default 25)
     @param limit: The number of records to be returned for the query.
 
     @rtype:   json
@@ -349,7 +365,7 @@ def declass_text_drop(version):
     return controller.text_drop_search(merriam_link, text, limit)
 
 
-@app.route('/declass/<version>/documents/<doc_id>/similar/')
+@app.route('/<version>/documents/<doc_id>/similar/')
 @cross_origin()
 def documents_similar(version, doc_id):
     """
@@ -362,12 +378,13 @@ def documents_similar(version, doc_id):
     """
     probe_request(version, request)
 
-    merriam_link = controller.get_merriam_link()
     return "Not implemented yet"
-    #return redirect('%s/%s/?%s' % (merriam_link, doc_id, request.query_string), code=303)
+    # merriam_link = controller.get_merriam_link()
+    # return redirect('%s/%s/?%s' % (merriam_link, doc_id,
+    #    request.query_string), code=303)
 
 
-@app.route('/declass/<version>/entities/autocomplete/')
+@app.route('/<version>/entities/autocomplete/')
 @cross_origin()
 def declass_entity_autocomplete(version):
     """
@@ -375,7 +392,7 @@ def declass_entity_autocomplete(version):
     autocompletion across all collections.
 
     Can be invoked by:
-    /declass/v0.4/entities/autocomplete/?type=<entity>&autocomplete_text=<query>
+    /v0.4/entities/autocomplete/?type=<entity>&autocomplete_text=<query>
 
     @type  type: string
     @param type: A valid collection entity (persons, countries, topics).
@@ -396,7 +413,7 @@ def declass_entity_autocomplete(version):
     return controller.get_entity_autocomplete(word_start, entity_type)
 
 
-@app.route('/declass/<version>/')
+@app.route('/<version>/')
 @cross_origin()
 def api(version):
     """
@@ -446,22 +463,26 @@ def api(version):
     accepted_params = controller.get_config_parameters()
     accepted_fields = controller.get_config_fields()
 
-    #----------------------------------------------------------------------------------------------#
+    # ------------------------------------------------------------------- #
     # Analyze user input to validate requested parameters and fields
-    #--------------------------------------------------------------------------#
+    # ------------------------------------------------------------------- #
 
-    passed_params = [] if (not list(request.args.items())) else [i[0].lower() for i in list(request.args.items())]
-    passed_fields = [] if (not request.args.get('fields')) else request.args.get('fields').lower().split(',')
+    passed_params = [] if (not list(request.args.items())) \
+        else [i[0].lower() for i in list(request.args.items())]
+    passed_fields = [] if (not request.args.get('fields')) \
+        else request.args.get('fields').lower().split(',')
     filters = {}
     filters['start_date'] = request.args.get('start_date',  None)
-    filters['end_date'] =  request.args.get('end_date', None)
+    filters['end_date'] = request.args.get('end_date', None)
     filters['exact_date'] = request.args.get('date', None)
     filters['page'] = request.args.get('page')
-    filters['page_size'] = int(request.args.get('page_size', controller.PAGE_SIZE_DEFAULT))
+    filters['page_size'] = int(request.args.get('page_size',
+                                                controller.PAGE_SIZE_DEFAULT))
     filters['page_start_index'] = clerk.set_page_start_index(filters['page'])
     filters['page_url'] = request.url
 
-    filters['collections'] = [] if (not request.args.get('collections')) else request.args.get('collections').lower().split(',')
+    filters['collections'] = [] if (not request.args.get('collections')) \
+        else request.args.get('collections').lower().split(',')
     if not filters['collections']:
         filters['collections'] = controller.get_collection_names()
     filters['fields'] = accepted_fields
@@ -498,12 +519,11 @@ def api(version):
     if not clerk.valid_filters(filters):
         complain("Filters", accepted_fields)
 
-
-    #--------------------------------------------------------------------------#
+    # ---------------------------------------------------------------------- #
     # Perform a search operation depending on specified parameters
-    #--------------------------------------------------------------------------#
+    # ---------------------------------------------------------------------- #
 
-    # CASE 1: Search documents by single id or list of ids
+    # 1: Search documents by single id or list of ids
     if "id" in passed_params or "ids" in passed_params:
         accepted_params = {'id', 'fields'}
         doc_ids = [request.args.get('id')]
@@ -517,74 +537,100 @@ def api(version):
 
         return controller.find_docs_by_ids(doc_ids, filters)
 
-    # CASE 2: Search documents by classification, persons, countries, and topics
-    if "person_ids" in passed_params and "geo_ids" in passed_params and "topic_ids" in passed_params and "classification_ids" in passed_params:
-        return controller.find_docs_by_person_country_topic_classification(person_ids, person_logic, geo_ids, geo_logic, topic_ids, topic_logic, classification_ids, classification_logic, filters)
+    # 2: Search documents by classification, persons, countries, and topics
+    if "person_ids" in passed_params and "geo_ids" in passed_params and \
+       "topic_ids" in passed_params and "classification_ids" in passed_params:
+        return controller.find_docs_by_person_country_topic_classification(
+          person_ids, person_logic, geo_ids, geo_logic, topic_ids, topic_logic,
+          classification_ids, classification_logic, filters)
 
-    # CASE 3: Search documents by persons, countries, and topics entities combined
-    if "person_ids" in passed_params and "geo_ids" in passed_params and "topic_ids" in passed_params:
-        return controller.find_docs_by_person_country_topic(person_ids, person_logic, geo_ids, geo_logic, topic_ids, topic_logic, filters)
+    # 3: Search documents by persons, countries, and topics entities combined
+    if "person_ids" in passed_params and "geo_ids" in passed_params and \
+       "topic_ids" in passed_params:
+        return controller.find_docs_by_person_country_topic(
+          person_ids, person_logic, geo_ids, geo_logic, topic_ids, topic_logic,
+          filters)
 
-    # CASE 4: Search documents by classification, topics, and persons
-    if "person_ids" in passed_params and "classification_ids" in passed_params and "topic_ids" in passed_params:
-        return controller.find_docs_by_person_classification_topic(person_ids, person_logic, classification_ids, classification_logic, topic_ids, topic_logic, filters)
+    # 4: Search documents by classification, topics, and persons
+    if "person_ids" in passed_params and \
+       "classification_ids" in passed_params and "topic_ids" in passed_params:
+        return controller.find_docs_by_person_classification_topic(
+          person_ids, person_logic, classification_ids, classification_logic,
+          topic_ids, topic_logic, filters)
 
-    # CASE 5: Search documents by classification, topics, and countries
-    if "classification_ids" in passed_params and "geo_ids" in passed_params and "topic_ids" in passed_params:
-        return controller.find_docs_by_classification_country_topic(classification_ids, classification_logic, geo_ids, geo_logic, topic_ids, topic_logic, filters)
+    # 5: Search documents by classification, topics, and countries
+    if "classification_ids" in passed_params and \
+       "geo_ids" in passed_params and "topic_ids" in passed_params:
+        return controller.find_docs_by_classification_country_topic(
+          classification_ids, classification_logic, geo_ids, geo_logic,
+          topic_ids, topic_logic, filters)
 
-    # CASE 6: Search documents by classification, persons, and countries
-    if "person_ids" in passed_params and "geo_ids" in passed_params and "classification_ids" in passed_params:
-        return controller.find_docs_by_person_country_classification(person_ids, person_logic, geo_ids, geo_logic, classification_ids, classification_logic, filters)
+    # 6: Search documents by classification, persons, and countries
+    if "person_ids" in passed_params and "geo_ids" in passed_params and \
+       "classification_ids" in passed_params:
+        return controller.find_docs_by_person_country_classification(
+          person_ids, person_logic, geo_ids, geo_logic,
+          classification_ids, classification_logic, filters)
 
-    # CASE 7: Search documents by persons and countries combined
+    # 7: Search documents by persons and countries combined
     if "person_ids" in passed_params and "geo_ids" in passed_params:
-        return controller.find_docs_by_person_country(person_ids, person_logic, geo_ids, geo_logic, filters)
+        return controller.find_docs_by_person_country(
+          person_ids, person_logic, geo_ids, geo_logic, filters)
 
-    # CASE 8: Search documents by persons and topics combined
+    # 8: Search documents by persons and topics combined
     if "person_ids" in passed_params and "topic_ids" in passed_params:
-        return controller.find_docs_by_person_topic(person_ids, person_logic, topic_ids, topic_logic, filters)
+        return controller.find_docs_by_person_topic(
+          person_ids, person_logic, topic_ids, topic_logic, filters)
 
-    # CASE 9: Search documents by countries and topics combined
+    # 9: Search documents by countries and topics combined
     if "geo_ids" in passed_params and "topic_ids" in passed_params:
-        return controller.find_docs_by_country_topic(geo_ids, geo_logic, topic_ids, topic_logic, filters)
+        return controller.find_docs_by_country_topic(
+          geo_ids, geo_logic, topic_ids, topic_logic, filters)
 
-    # CASE 10: Search documents by classification and persons
+    # 10: Search documents by classification and persons
     if "person_ids" in passed_params and "classification_ids" in passed_params:
-        return controller.find_docs_by_person_classification(person_ids, person_logic, classification_ids, classification_logic, filters)
+        return controller.find_docs_by_person_classification(
+          person_ids, person_logic, classification_ids, classification_logic,
+          filters)
 
-    # CASE 11: Search documents by classification and countries
+    # 11: Search documents by classification and countries
     if "geo_ids" in passed_params and "classification_ids" in passed_params:
-        return controller.find_docs_by_classification_country(classification_ids, classification_logic, geo_ids, geo_logic, filters)
+        return controller.find_docs_by_classification_country(
+          classification_ids, classification_logic, geo_ids, geo_logic,
+          filters)
 
-    # CASE 12: Search documents by classification and topics
+    # 12: Search documents by classification and topics
     if "classification_ids" in passed_params and "topic_ids" in passed_params:
-        return controller.find_docs_by_classification_topic(classification_ids, classification_logic, topic_ids, topic_logic, filters)
+        return controller.find_docs_by_classification_topic(
+          classification_ids, classification_logic, topic_ids, topic_logic,
+          filters)
 
-    # CASE 13: Search documents by persons only
+    # 13: Search documents by persons only
     if "person_ids" in passed_params:
-        return controller.find_docs_by_persons(person_ids, person_logic, filters)
+        return controller.find_docs_by_persons(
+          person_ids, person_logic, filters)
 
-    # CASE 14: Search documents by countries only
+    # 14: Search documents by countries only
     if "geo_ids" in passed_params:
         return controller.find_docs_by_country(geo_ids, geo_logic, filters)
 
-    # CASE 15: Search documents by topics only
+    # 15: Search documents by topics only
     if "topic_ids" in passed_params:
         return controller.find_docs_by_topic(topic_ids, topic_logic, filters)
 
-    # CASE 16: Search documents by classification only
+    # 16: Search documents by classification only
     if "classification_ids" in passed_params:
-        return controller.find_docs_by_classification(classification_ids, classification_logic, filters)
+        return controller.find_docs_by_classification(
+          classification_ids, classification_logic, filters)
 
-    # CASE 17: Search all documents by date or date range
+    # 17: Search all documents by date or date range
     if filters['exact_date'] or filters['start_date']:
         return controller.find_docs_by_date(filters)
 
     complain("Parameters", accepted_params)
 
 
-@app.route('/declass/<version>/topics/collection/<collection_name>')
+@app.route('/<version>/topics/collection/<collection_name>')
 @cross_origin()
 def declass_collection_topics(version, collection_name):
     """
@@ -608,7 +654,7 @@ def declass_collection_topics(version, collection_name):
     return controller.get_collection_topics(collection_name, limit)
 
 
-@app.route("/declass/<version>/topics/<collection_name>/topic/<topic_id>")
+@app.route("/<version>/topics/<collection_name>/topic/<topic_id>")
 @cross_origin()
 def declass_topic_tokens(version, collection_name, topic_id):
     """
@@ -635,7 +681,7 @@ def declass_topic_tokens(version, collection_name, topic_id):
     return controller.get_topic_tokens(collection_name, int(topic_id), limit)
 
 
-@app.route("/declass/<version>/topics/<collection_name>/docs/<topic_id>")
+@app.route("/<version>/topics/<collection_name>/docs/<topic_id>")
 @cross_origin()
 def declass_topic_docs(version, collection_name, topic_id):
     """
@@ -662,7 +708,7 @@ def declass_topic_docs(version, collection_name, topic_id):
     return controller.get_topic_docs(collection_name, int(topic_id), limit)
 
 
-@app.route("/declass/<version>/topics/doc/<doc_id>")
+@app.route("/<version>/topics/doc/<doc_id>")
 @cross_origin()
 def declass_doc_topics(version, doc_id):
     """
@@ -675,7 +721,8 @@ def declass_doc_topics(version, doc_id):
     probe_request(version, request)
     return controller.get_doc_topics(doc_id)
 
-@app.route("/declass/<version>/classification/collection/<collection_name>")
+
+@app.route("/<version>/classification/collection/<collection_name>")
 @cross_origin()
 def declass_classification_count(version, collection_name):
     """
@@ -688,7 +735,8 @@ def declass_classification_count(version, collection_name):
     probe_request(version, request)
     return controller.get_classification_collection(collection_name)
 
-@app.route("/declass/<version>/tags/collection/<collection_name>/doc/<doc_id>")
+
+@app.route("/<version>/tags/collection/<collection_name>/doc/<doc_id>")
 @cross_origin()
 def declass_tag_doc(version, collection_name, doc_id):
     """
@@ -701,7 +749,8 @@ def declass_tag_doc(version, collection_name, doc_id):
     probe_request(version, request)
     return controller.get_tag_docs(collection_name, doc_id)
 
-@app.route("/declass/<version>/text/")
+
+@app.route("/<version>/text/")
 @cross_origin()
 def declass_full_text_search(version):
     """
@@ -724,19 +773,23 @@ def declass_full_text_search(version):
     @return:  Array of documents info.
     """
 
-    accepted_params = {'search', 'page_size', 'page', 'start_date', 'end_date', 'collections'}
-    passed_params = [] if (not list(request.args.items())) else [i[0].lower() for i in list(request.args.items())]
+    accepted_params = {'search', 'page_size', 'page', 'start_date', 'end_date',
+                       'collections'}
+    passed_params = [] if (not list(request.args.items())) \
+        else [i[0].lower() for i in list(request.args.items())]
 
     filters = {}
     filters['start_date'] = request.args.get('start_date',  None)
-    filters['end_date'] =  request.args.get('end_date', None)
+    filters['end_date'] = request.args.get('end_date', None)
     filters['exact_date'] = None
     filters['page'] = request.args.get('page', '1')
-    filters['page_size'] = request.args.get('page_size', str(controller.PAGE_SIZE_DEFAULT))
+    filters['page_size'] = request.args.get('page_size',
+                                            str(controller.PAGE_SIZE_DEFAULT))
     filters['page_url'] = request.url
     search_text = request.args.get('search')
 
-    filters['collections'] = [] if (not request.args.get('collections')) else request.args.get('collections').lower().split(',')
+    filters['collections'] = [] if (not request.args.get('collections')) \
+        else request.args.get('collections').lower().split(',')
     if not filters['collections']:
         filters['collections'] = controller.get_collection_names()
 
@@ -753,13 +806,13 @@ def declass_full_text_search(version):
         complain("Filters", accepted_params)
 
     if not search_text:
-    	complain("Parameters", accepted_params)
+        complain("Parameters", accepted_params)
 
     if filters['page'] and not filters['page'].isdigit():
         complain('InvalidValues')
 
     if filters['page_size'] and not filters['page_size'].isdigit():
-    	complain('InvalidValues')
+        complain('InvalidValues')
 
     return controller.full_text_search(search_text, filters)
 
@@ -770,7 +823,9 @@ def page_not_found(e):
     This function captures all invalid requests and page not found
     results.
     """
-    return clerk.complain(404, "Invalid API parameters",[{'KeyError':'invalid request;'}])
+    return clerk.complain(404, "Invalid API parameters",
+                          [{'KeyError': 'invalid request;'}])
+
 
 @app.errorhandler(Exception)
 def all_exception_handler(error):
@@ -779,7 +834,8 @@ def all_exception_handler(error):
     If any error occurs, the exception trace is hidden and a default
     message is provided instead.
     """
-    return clerk.complain(404, "Service raised an exception", "Please contact administrator if this issue persists")
+    return clerk.complain(404, "Service raised an exception", "Please contact \
+administrator if this issue persists")
 
 
 def probe_request(version, request, accepted_params=None):
@@ -805,7 +861,8 @@ def probe_request(version, request, accepted_params=None):
         if accepted_params is None:
             complain("NoParameters")
 
-        passed_params = [] if (not request_args) else [i[0].lower() for i in request_args]
+        passed_params = [] if (not request_args) \
+            else [i[0].lower() for i in request_args]
 
         if not clerk.valid_params(passed_params, accepted_params, request):
             complain("Parameters", accepted_params)
@@ -831,33 +888,51 @@ def complain(message, parameters=None):
     """
     if message == "Version":
         valid_versions = controller.supported_versions
-        complaint = clerk.complain(404, "Invalid API version",[{'KeyError':'invalid version; try one of the ''following: %s' %(','.join(str(i) for i in valid_versions))}])
+        complaint = clerk.complain(404, "Invalid API version", [{'KeyError':
+                                   'invalid version; try one of the following: \
+                                   %s' % (','.join(str(i)
+                                                   for i in valid_versions))}])
 
     if message == "Parameters":
-        complaint = clerk.complain(404, "Invalid API parameters",[{'KeyError':'invalid parameters; try one of the ''following: %s' %(','.join(parameters))}])
+        complaint = clerk.complain(404, "Invalid API parameters", [{'KeyError':
+                                   'invalid parameters; try one of the \
+                                   ''following: %s' % (','.join(parameters))}])
 
     if message == "NoParameters":
-        complaint = clerk.complain(404, "Invalid API parameters",[{'KeyError':'request does not expect to take any parameter'}])
+        complaint = clerk.complain(404, "Invalid API parameters", [{'KeyError':
+                                   'request does not expect to take any \
+                                   parameter'}])
 
     if message == "Fields":
-        complaint = clerk.complain(404, "Invalid API parameters",[{'KeyError':'invalid fields; try one of the ''following: %s' %(','.join(parameters))}])
+        complaint = clerk.complain(404, "Invalid API parameters", [{'KeyError':
+                                   'invalid fields; try one of the \
+                                   ''following: %s' % (','.join(parameters))}])
 
     if message == "Entities":
-        complaint = clerk.complain(404, "Invalid API parameters",[{'KeyError':'invalid fields; try one of the ''following: %s' %(','.join(parameters))}])
+        complaint = clerk.complain(404, "Invalid API parameters", [{'KeyError':
+                                   'invalid fields; try one of the \
+                                   ''following: %s' % (','.join(parameters))}])
 
     if message == "Filters":
-        complaint = clerk.complain(404, "Invalid API parameters",[{'KeyError':'invalid filters; try one of the ''following: %s' %(','.join(parameters))}])
+        complaint = clerk.complain(404, "Invalid API parameters", [{'KeyError':
+                                   'invalid filters; try one of the \
+                                   ''following: %s' % (','.join(parameters))}])
 
     if message == "Partial":
-        complaint = clerk.complain(404, "Invalid API parameters",[{'KeyError':'some keys do not contain values'}])
+        complaint = clerk.complain(404, "Invalid API parameters", [{'KeyError':
+                                   'some keys do not contain values'}])
 
     if message == "Pagination":
-        complaint = clerk.complain(404, "Invalid API parameters",[{'KeyError':'invalid page or page_size values'}])
+        complaint = clerk.complain(404, "Invalid API parameters", [{'KeyError':
+                                   'invalid page or page_size values'}])
 
     if message == "InvalidValues":
-        complaint = clerk.complain(404, "Invalid API parameters",[{'KeyError':'invalid parameter value(s)'}])
+        complaint = clerk.complain(404, "Invalid API parameters", [{'KeyError':
+                                   'invalid parameter value(s)'}])
 
     if message == 404:
-        complaint = clerk.complain(404, "Invalid API parameters",[{'KeyError':'invalid request; try one of the ''following: %s' %(parameters)}])
+        complaint = clerk.complain(404, "Invalid API parameters", [{'KeyError':
+                                   'invalid request; try one of the \
+                                   ''following: %s' % (parameters)}])
 
     abort(complaint)
