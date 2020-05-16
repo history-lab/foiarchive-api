@@ -5,7 +5,7 @@ import argparse
 
 def call_endpoint(url):
     r = requests.get(url)
-    return(json.dumps(r.json(), indent=2))
+    return(r.json())
 
 
 if __name__ == "__main__":
@@ -15,4 +15,4 @@ if __name__ == "__main__":
     parser.add_argument('endpoint', type=str, help='API endpoint')
     args = parser.parse_args()
     url = 'http://' + args.server + '/' + args.endpoint
-    print(call_endpoint(url))
+    print(json.dumps(call_endpoint(url), indent=2))

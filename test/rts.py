@@ -19,7 +19,7 @@ def run_test_suite(test_suite, server):
             r = call_endpoint(url)
             # print_fmt_output(test_num, test[0], url, r)
             # print(r)
-            print(type(r.json()))
+            print(type(r))
 
 
 if __name__ == "__main__":
