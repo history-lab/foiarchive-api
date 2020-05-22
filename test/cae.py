@@ -11,8 +11,8 @@ def call_endpoint(url):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
             description='tests an API endpoint')
-    parser.add_argument('server', type=str, help='API server url')
     parser.add_argument('endpoint', type=str, help='API endpoint')
+    parser.add_argument('server', type=str, help='API server url')
     args = parser.parse_args()
-    url = 'http://' + args.server + '/' + args.endpoint
+    url = args.server + args.endpoint
     print(json.dumps(call_endpoint(url), indent=2))
