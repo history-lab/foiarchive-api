@@ -65,3 +65,6 @@ env
 
 # ignore changes to db credentials !!!
 **credentials.yml
+
+# ignore json files in the test/data/out directory
+test/data/out/*.json*
