@@ -1,0 +1,26 @@
+# from foiarchive-api README
+fields,fields
+doc_cnts,visualizations/doc_cnts/
+doc_collection,visualizations/doc_collection
+doc_cnts_year,visualizations/doc_cnts/
+overview,visualizations/overview/
+class_topics,visualizations/frus/classification_topics/
+class_persons,visualizations/frus/classification_topics/
+random,random
+topics,topics/frus/topic/1001
+topic_doc,topics/doc/frus1969-76ve14p1d26
+collections,collections
+ids,?ids=frus1945-50Inteld105,1974STATE085546
+class_frus,classification/collection/frus
+start_end_date,?start_date=1947-01-01&end_date=1950-12-01
+spec_date,?date=1945-10-02
+frus_class_cntries,visualizations/frus/classification_countries/
+#entity_info,entity_info/
+ei_coll,entity_info/?collection=kissinger
+ei_coll_ent,entity_info/?collection=kissinger&entity=countries
+#text,text
+text,text/?search=polio&start_date=1960-01-01&end_date=1985-01-01
+text,text/?search=polio&start_date=1960-01-01&end_date=1975-01-01&collections=frus,kissinger
+#overview,overview/
+ov_collent,overview/?collection=statedeptcables&entity=countries&start_date=1973-01-01&end_date=1979-12-31
+ov_collentgeo,overview/?collection=statedeptcables&entity=persons&start_date=1974-03-01&end_date=1976-03-01&geo_ids=040

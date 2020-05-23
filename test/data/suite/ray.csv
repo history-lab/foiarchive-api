@@ -1,0 +1,13 @@
+flds,fields
+colls,collections
+eicoll,entity_info/?collection=statedeptcables
+eicollent,entity_info/?collection=kissinger&entity=countries
+ovcollent,overview/?collection=frus&entity=countries&start_date=1973-01-01&end_date=1979-12-31
+ovcollentgeo,overview/?collection=statedeptcables&entity=persons&start_date=1974-03-01&end_date=1976-03-01&geo_ids=040
+rand,random
+docid,documents/frus1977-80v03d25
+topiccoll,topics/collection/kissinger
+colltopic,topics/frus/topic/1073
+colldoc,topics/frus/docs/1030
+doctopics,topics/doc/frus1977-80v03d25
+text,text/?search="tet offensive"&start_date=1968-01-01&end_date=1968-12-31

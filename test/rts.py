@@ -16,6 +16,8 @@ def run_test_suite(test_suite, server):
         test_num = 0
         tests_passed = 0
         for test in test_reader:
+            if test[0][0] == '#':
+                continue
             test_num += 1
             url = server + test[1]
             starttime = datetime.now()
@@ -29,6 +31,7 @@ def run_test_suite(test_suite, server):
             print('{0:2d}. {1:>12s}: {2}'.format(test_num, test[0], result))
             print(url)
             print('runtime: {0}'.format(endtime-starttime))
+            print()
             test_out_file = test_out_dir + test[0] + '.json'
             with open(test_out_file, 'w') as tofile:
                 tofile.write(json.dumps(r, indent=4))
