@@ -8,7 +8,7 @@ import json
 
 from collections import defaultdict
 from datetime import date, datetime, timedelta
-from sqlalchemy import create_engine, and_, func, desc, asc
+from sqlalchemy import create_engine, and_, func, desc, asc, distinct
 from sqlalchemy.orm import load_only, sessionmaker
 from sqlalchemy.ext.automap import automap_base
 
@@ -1706,49 +1706,45 @@ class Controller(object):
         session.close()
         return response
 
-
-        # Update topics
-
     def get_collection_topics(self, collection, limit):
-        """
-        This function is used by the declass_collection_topics() API route.
-        """
+        """This function is used by the declass_collection_topics() API
+        route."""
         result_list = []
         total_count = 0
 
         # 1st, check if collection name exists
         if(collection not in self.collection_names.keys()):
-            return self.clerk.complain(Controller.HTTP_STATUS_BAD_REQUEST, "Invalid API parameters",
-                                    [{'KeyError':
-                                      'Plese enter a valid collection name'}
-                                     ])
+            return self.clerk.complain(
+                Controller.HTTP_STATUS_BAD_REQUEST, "Invalid API parameters",
+                [{'KeyError': 'Plese enter a valid collection name'}])
 
         database = self.collection_names[collection]
         table_names = self.Tables[database].keys()
-
         session = self.Session()
+
         if 'topic_doc' in table_names and 'topics' in table_names:
             topic_doc = self.Tables[database]['topic_doc']
             topics = self.Tables[database]['topics']
+            topic_cnt_qry = session.query(
+                func.count(distinct(topic_doc.topic_id)).label('count')).\
+                join(topics).filter(topics.name != "Null").all()
+            topic_qry = session.query(
+                func.avg(topic_doc.topic_score).label('average_score'),
+                func.count(topic_doc.topic_id).label('doc_count'),
+                topic_doc.topic_id.label('topic_id'), topics.name).\
+                join(topics).filter(topics.name != "Null").\
+                group_by(topic_doc.topic_id).limit(limit)
+            if topic_cnt_qry:
+                total_count = topic_cnt_qry[0][0]
+            for (average_score, doc_count, topic_id, title) in topic_qry:
+                result_list.append({'average_score': average_score,
+                                    'doc_count': doc_count,
+                                    'topic_id': topic_id,
+                                    'title': title})
 
-            query = session.query(func.avg(topic_doc.topic_score).label('average_score'),
-                                  func.count(topic_doc.topic_id).label('doc_count'),
-                                  topic_doc.topic_id.label('topic_id'),
-                                  topics.name).join(topics).filter(topics.name != "Null").group_by(topic_doc.topic_id)
-
-            # Subquery for count variable
-            query_total_count = query.subquery().count().label('count')
-            query_with_limit = query.offset(0).limit(limit).subquery()
-            query_combined	= session.query(query_total_count, query_with_limit).all()
-
-            if len(query_combined) > 0:
-                    (count, avg_score, doc_count, top_id, title) = query_combined[0]
-                    total_count = total_count + count
-
-            for (count, average_score, doc_count, topic_id, title) in query_combined:
-                result_list.append({'average_score':average_score, 'doc_count':doc_count, 'topic_id':topic_id, 'title':title})
-
-        response = self.clerk.process({"topics":result_list}, Controller.HTTP_STATUS_SUCCESS, count=total_count)
+        response = self.clerk.process({"topics": result_list},
+                                      Controller.HTTP_STATUS_SUCCESS,
+                                      count=total_count)
         response.mimetype = 'application/json'
         response.headers['Content-Type'] = 'application/json'
         session.close()
