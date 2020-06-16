@@ -327,8 +327,8 @@ def documents(version, doc_ids):
     """
     This end-point redirects traffic to another end-point.
     """
-    return redirect('/%s/?ids=%s&%s' % (
-        version, doc_ids, request.query_string), code=303)
+    return redirect('/%s/?ids=%s' % (
+        version, doc_ids), code=303)
 
 
 @app.route('/<version>/textdrop/')
