@@ -3,9 +3,13 @@ import json
 import argparse
 
 
-def call_endpoint(url):
-    r = requests.get(url)
-    return(r.json())
+def call_endpoint(url, error_handler, timeout=30):
+    try:
+        r = requests.get(url, timeout=timeout)
+        return(r.json())
+    except requests.exceptions.RequestException as e:
+        error_handler()
+        raise SystemExit(e)
 
 
 if __name__ == "__main__":

@@ -4,13 +4,21 @@ import time
 import rts
 
 
+def error_handler():
+    print("Houston we have a problem!")
+
+
 def run_api_monitor(query_list, server, pause):
     print("*** History Lab API Monitor ***")
     while True:
-        rts.run_test_suite(query_list, server)
-        print("{}: Sleeping for {} minutes".format(datetime.datetime.now(),
-                                                   pause))
-        time.sleep(pause * 60)
+        try:
+            rts.run_test_suite(query_list, server, error_handler)
+            print("{}: Sleeping for {} minutes".format(datetime.datetime.now(),
+                                                       pause))
+            time.sleep(pause * 60)
+        except KeyboardInterrupt:
+            print('API Monitor exiting. Bye!')
+            break
 
 
 if __name__ == "__main__":

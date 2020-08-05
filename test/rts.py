@@ -6,7 +6,7 @@ from datetime import datetime
 from cae import call_endpoint
 
 
-def run_test_suite(test_suite, server):
+def run_test_suite(test_suite, server, error_handler):
     print("Running test suite {0} against {1}".format(test_suite, server))
     test_suite_dir = os.getenv('FOIAPI_TSDIR', './data/suite/')
     test_out_dir = os.getenv('FOIAPI_TODIR', './data/out/')
@@ -21,7 +21,7 @@ def run_test_suite(test_suite, server):
             test_num += 1
             url = server + test[1]
             starttime = datetime.now()
-            r = call_endpoint(url)
+            r = call_endpoint(url, error_handler)
             endtime = datetime.now()
             if 'error' in r:
                 result = 'fail'
