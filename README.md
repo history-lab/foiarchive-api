@@ -1,5 +1,6 @@
 # foiarchive-api
 Implemented in Python3 and Flask
+The website interface of the Freedom of Information Archive (FOIArchive) is available through the History Lab website at [http://history-lab.org/search](http://history-lab.org/search).
 <!--
 [![Build Status](https://travis-ci.org/mnyrop/declass-api.svg?branch=master)](https://travis-ci.org/mnyrop/declass-api)
 [![](https://img.shields.io/librariesio/github/mnyrop/declass-api.svg)](https://libraries.io/github/mnyrop/declass-api)
