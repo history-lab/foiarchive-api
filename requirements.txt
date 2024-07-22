@@ -9,7 +9,7 @@ entrypoints==0.3
 flake8==3.7.9
 Flask==2.3.2
 Flask-Cors==3.0.9
-idna==2.8
+idna==3.7
 itsdangerous==1.1.0
 Jinja2==2.11.3
 MarkupSafe==1.1.1
