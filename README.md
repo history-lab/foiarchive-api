@@ -1,3 +1,5 @@
+**Note:** This API was officially retired in August 2025.
+
 # foiarchive-api  
 The website interface of the Freedom of Information Archive (FOIArchive) is available through the History Lab website at [http://history-lab.org/search](http://history-lab.org/search)  
 Development version of the FOIArchive API, implemented in Python3 and Flask
